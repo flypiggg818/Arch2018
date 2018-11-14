@@ -45,15 +45,6 @@ IF IF0(.clk(clk_in),
        .d_mem_i(mem_din), 
        .inst_IFID_o(inst_IF_o)); 
 
-wire[31:0] inst_IFID_i; 
-assign inst_IFID_i = inst_IF_o; 
-wire[31:0] inst_IFID_o; 
-IF_ID IF_ID0(.dclk(dclk), 
-             .rst(rst_in), 
-             .rdy(rdy_in), 
-             .inst_IF_i(inst_IFID_i), 
-             .inst_ID_o(inst_IFID_o)); 
-
 always @(posedge clk_in)
   begin
     if (rst_in)

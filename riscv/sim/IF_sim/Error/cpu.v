@@ -42,6 +42,7 @@ IF IF0(.clk(clk_in),
        .rst(rst_in),
        .rdy(rdy_in), 
        .addr_mem_o(mem_a), 
+       .re_mem_o(re_IF_o), 
        .d_mem_i(mem_din), 
        .inst_IFID_o(inst_IF_o)); 
 
@@ -54,6 +55,8 @@ IF_ID IF_ID0(.dclk(dclk),
              .inst_IF_i(inst_IFID_i), 
              .inst_ID_o(inst_IFID_o)); 
 
+  wire posedg; 
+  edge_detector edt0(clk_in, dclk, posedg); 
 always @(posedge clk_in)
   begin
     if (rst_in)

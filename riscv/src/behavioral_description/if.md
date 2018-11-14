@@ -1,0 +1,2 @@
+- working on clk and dclk. dclk is 1/5 clk. 
+- start fetching instruction upon posedge of dclk. 

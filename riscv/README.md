@@ -15,3 +15,8 @@ I think simulation may be persuasive, since ram is especially talored to simulat
 
 # plan
 什么都不管了，直接用ram进行simulation，不论能不能上板子，因为我不知道如何使用板子进行incremental analysis。
+I aim to change the clock cycle. 
+The whole purpose of cpu_pause is that, you have to catch up what is left over when you resume. I don't care about any other things. How could I do that? 
+I choose to synchronize my pause, which means I check 'pause' signal only during the posedge clk. This means that inst-fetching has to hold back whenever it receives 'pause' signal. And it can get the instruction the next time, you know. 
+OH NO! If I roll back, the next time, it will cause a bubble. So IF_ID just freeze, and IF step forward. 
+OH NO! It's efficient though, but is difficult to understand. 

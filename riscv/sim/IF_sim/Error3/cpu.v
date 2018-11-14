@@ -46,8 +46,8 @@ IF IF0(.clk(clk_in),
        .inst_IFID_o(inst_IF_o)); 
 
 wire[31:0] inst_IFID_i; 
-assign inst_IFID_i = inst_IF_o; 
 wire[31:0] inst_IFID_o; 
+assign inst_IFID_i = inst_IF_o; 
 IF_ID IF_ID0(.dclk(dclk), 
              .rst(rst_in), 
              .rdy(rdy_in), 
