@@ -104,6 +104,8 @@ Run the controller (may require superuser privilege)
 
     ./run.sh path-to-ram path-to-input uart-port
 
+    // on Linux: /dev/ttyUSB1
+
 RAM data can be found as 'test/test.bin' after building the testcase.
 
 The controller will upload the data to FPGA BRAM (128KiB max), and can then be used to manage I/O and support debugging.

@@ -2,7 +2,7 @@
 `define Disable       1'b0
 `define ZeroWord      32'b0   // 默认的零信息
 `define ZeroByte      8'b0 
-
+`define NopRegAddr    5'b00000
 
 // 以下是自己定义的alu-op类型
 `define AluOpBus                6:0

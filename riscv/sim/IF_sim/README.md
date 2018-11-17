@@ -37,57 +37,5 @@ The backbone of the digital system should lie on dclk. Only operations concernin
 # About rw enable signal 
 These are delivered to negotiator instead of going to ram directly, because we need to avoid casual writing. If no writing requests, IF will read forever. Thus no need for IF's negotiator signal. 
 
-
-- consider the process of reading. -- no control signal is needed. 
-  
-  1. #(0) addr = 0; addr <- 1;
-  2. #(1) addr = 1; addr <- 2; // $(0) is out in posedge 
-  3. #(2) addr = 2; addr <- 3; // $(1) is out in posedge 
-  4. #(3) addr = 3; addr <- 4; // $(2) is out in posedge 
-  5. #(4) addr = 4 (next 0) // $(3) is out in posedge. 
-
-- **consider I can't do assignment in state 1**. Let = describes state, let <- describes action. 
-
-  1. #(0) addr <- 0; // prepare to read. 
-  2. #(1) addr = 0; addr <- 1; // ram receives addr 0, $(0) is out in posedge  
-  3. #(2) addr = 1; addr <- 2; // $(1) is out in posedge 
-  4. #(3) addr = 2; addr <- 3; // $(2) is out in posedge 
-  5. #(4) addr = 3; addr <- 4; // $(3) is out in posedge 
-  // 6. #(5) addr = 4 (next 0) // $(3) is out in posedge. 
-
-- final version 
-  
-  1. #(0) addr <- 0;
-  2. #(1) addr = 0; addr <- 1; // $(0) is out in posedge 
-  3. #(2) addr = 1; addr <- 2; // $(1) is out in posedge 
-  4. #(3) addr = 3; addr <- 4; // $(2) is out in posedge 
-  5. #(4) addr = 4 (next 0) // $(3) is out in posedge. 
-
-- consider writing a byte. 
-
-  1. #(0) din = (data); we = `Enable; addr = ???; // prepare to write. 
-  2. #(1) din = (data); addr = 1; // $(0) is in. 
-  3. #(2) din = (data); addr = 2; // $(1) is in. 
-  4. #(3) din = (data); addr = 3; // $(2) is in. 
-  5. #(4) din = Z; we = `Disable; addr = ???; // $(3) is in. 
-
-- consider I can't do assignment in state 1. writing a byte. 
-
-  1. #(0) din <- (data0); we <- `Enable; addr <- 0; // prepare to write. 
-  2. #(1) din = (data0); we = `Enable; addr = 0; din <- (data1); addr <= 1; // ram starts to see them. 
-  3. #(2) din = (data1); addr = 1; din <- (data2); addr <= 2; // $(0) is in. 
-  4. #(3) din = (data2); addr = 2; din <- (data3); addr <= 3; // $(1) is in. 
-  5. #(4) din = (data3); addr = 3; din <- (data1)? ; addr <= 4; // $(2) is in. 
-  6. #(5) din = Z; we = `Disable; addr = 4; // $(3) is in. 
-
-- consider alternate between read and write. 
-
-  1. #(0) addr = 0; 
-  2. #(1) addr = 1 // $(0) is out in posedge 
-  3. #(2) addr = 2 // $(1) is out in posedge 
-  4. #(3) addr = 3 // $(2) is out in posedge 
-  5. #(4) din = (data0); we = `Enable; addr = ???0; // $(3) is out in posedge. prepare to write.
-  6. #(5) din = (data1); addr = 1; // $(0) is in. 
-  7. #(6) din = (data2); addr = 2; // $(1) is in. 
-  8. #(7) din = (data3); addr = 3; // $(2) is in. 
-  9. #(8) din = Z; we = `Disable; addr = 0; // $(3) is in. 
+# About test on board 
+I can Immediately test on board that whether FPGA has fetched target address. This can be tested by using LED to indicate the bytes in mem. And let IF module to fetch the same address all the time. **I put all the simulation related file in 'FPGA_test' folder.**
