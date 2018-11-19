@@ -9,11 +9,13 @@ module EX(
   input wire wreg_IDEX_i, 
   input wire[4:0] waddr_IDEX_i,
   
+  output wire[`AluOpBus] aluop_EXMEM_o, 
   output reg wreg_EXMEM_o, // downstream signals
   output reg[4:0] waddr_EXMEM_o, 
-  output reg[31:0] wdata_EXMEM_o
+  output reg[31:0] alurslt_EXMEM_o
 );
-
+  assign aluop_EXMEM_o = aluop_IDEX_i; 
+  
   reg[31:0] arith_rslt; 
 	initial begin 
     $monitor("arith_rslt: %b reg1: %b reg2: %b rd: %b", arith_rslt, regdata1_IDEX_i, regdata2_IDEX_i, waddr_IDEX_i); 
@@ -22,6 +24,9 @@ module EX(
   always @ (*) begin 
     case (aluop_IDEX_i)
       `ALU_ADD_OP: begin 
+        arith_rslt <= regdata1_IDEX_i + regdata2_IDEX_i; 
+      end 
+      `ALU_LB_OP, `ALU_LH_OP, `ALU_LW_OP, `ALU_LBU_OP, `ALU_LHU_OP: begin // for LOAD class of instruction's 'base + offset' 
         arith_rslt <= regdata1_IDEX_i + regdata2_IDEX_i; 
       end 
       default: begin 
@@ -35,17 +40,17 @@ module EX(
     if (rst == `Enable) begin 
       wreg_EXMEM_o <= `Disable; 
       waddr_EXMEM_o <= `NopRegAddr; 
-      wdata_EXMEM_o <= `ZeroWord; 
+      alurslt_EXMEM_o <= `ZeroWord; 
     end else begin 
       wreg_EXMEM_o <= wreg_IDEX_i; 
       waddr_EXMEM_o <= waddr_IDEX_i; 
-      wdata_EXMEM_o <= `NopRegAddr; 	// avoid latch 
+      alurslt_EXMEM_o <= `NopRegAddr; 	// avoid latch 
       case (alusel_IDEX_i) 
         `ALU_NOP_SEL: begin 
-          wdata_EXMEM_o <= `ZeroWord; 
+          alurslt_EXMEM_o <= `ZeroWord; 
         end
         `ALU_ARITH_SEL: begin 
-          wdata_EXMEM_o <= arith_rslt; 
+          alurslt_EXMEM_o <= arith_rslt; 
         end 
         default: begin end 
       endcase 
