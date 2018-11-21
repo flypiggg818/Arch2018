@@ -10,18 +10,18 @@ module clk_div(
   output wire dclk 
 ); 
   reg[2:0] cnt; 
-  assign dclk = cnt[2]; 
+  assign dclk = cnt[2] & cnt[1] & cnt[0]; 
 
   reg delay_rst; 
   wire edge_rst; // edge signal used to reset clock counter. 
-  assign edge_rst = rst ^ delay_rst; 
+  assign edge_rst = rst & ~delay_rst; 
   always @ (posedge clk) begin 
     delay_rst <= rst; 
   end 
 
   always @ (posedge clk) begin 
     if (edge_rst == 1'b1) begin 
-      cnt <= 3'b0; 
+      cnt <= 3'b111; 
     end else if (cnt == 3'b111) begin 
       cnt <= 3'b0; 
     end else begin 

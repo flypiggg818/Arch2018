@@ -2,7 +2,8 @@
 
 /**
   This is a simulation testbench for riscv cpu. 
-  It contains both cpu and ram. 
+  It contains both cpu and ram.
+  But some ram ports are assigned as contant, thus not fully functional. 
 */
 module top_sim;
 

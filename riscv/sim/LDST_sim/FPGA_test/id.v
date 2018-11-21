@@ -19,7 +19,8 @@ module ID(
   output reg[31:0] regdata1_IDEX_o, // register data value 
   output reg[31:0] regdata2_IDEX_o, 
   output reg wreg_IDEX_o, // whether to write back 
-  output reg[4:0] waddr_IDEX_o // write back destination addr 
+  output reg[4:0] waddr_IDEX_o, // write back destination addr 
+  output reg[31:0] storedata_IDEX_o // used only by STORE inst
 ); 
 
   wire[`OpBus] opcode = inst_IFID_i[6:0]; 
@@ -47,6 +48,7 @@ module ID(
 			raddr2_REGFILE_o <= `NopRegAddr; 	// avoid latch  
 			imm <= `ZeroWord; 								// avoid latch  
 			waddr_IDEX_o <= `NopRegAddr; 			// avoid latch  
+      storedata_IDEX_o <= `ZeroWord; 
     end else begin // set default decoding first, then switch to cases. 
       re1_REGFILE_o <= `Enable; 
       re2_REGFILE_o <= `Enable; 
@@ -56,6 +58,7 @@ module ID(
       wreg_IDEX_o <= `Disable; // for safety issue 
       aluop_IDEX_o <= `ALU_NOP_OP; 
       alusel_IDEX_o <= `ALU_NOP_SEL; 
+      storedata_IDEX_o <= `ZeroWord; 
       case (opcode) 
         `LOGIC_IMM_OP: begin // rs1 arith with imm, store to dst
           wreg_IDEX_o <= `Enable; 
@@ -90,7 +93,24 @@ module ID(
             `LHU_FNT3: begin 
               aluop_IDEX_o <= `ALU_LHU_OP; 
             end 
-          default: begin end // dangerous 
+            default: begin end // dangerous 
+          endcase 
+        end 
+        `STORE_OP: begin // fetch rs1 and rs2, operate in below always block
+          wreg_IDEX_o <= `Disable; 
+          imm <= {{25{inst_IFID_i[31]}}, inst_IFID_i[31:25]}; // sign-extended offset 
+          alusel_IDEX_o <= `ALU_ARITH_SEL; 
+          case (funct3) // use aluop to distinguish different load data length
+            `SB_FNT3: begin 
+              aluop_IDEX_o <= `ALU_SB_OP; 
+            end 
+            `SH_FNT3: begin 
+              aluop_IDEX_o <= `ALU_SH_OP; 
+            end 
+            `SW_FNT3: begin 
+              aluop_IDEX_o <= `ALU_SW_OP; 
+            end 
+            default: begin end // dangerous 
           endcase 
         end 
         default: begin 
@@ -114,6 +134,9 @@ module ID(
   always @ (*) begin 
     if (rst == `Enable) begin 
       regdata2_IDEX_o <= `ZeroWord; 
+    end else if (opcode == `STORE_OP) begin // STORE is irregular in decoding. 
+      storedata_IDEX_o <= rdata2_REGFILE_i; 
+      regdata2_IDEX_o <= imm;   
     end else if (re2_REGFILE_o == `Enable) begin 
       regdata2_IDEX_o <= rdata2_REGFILE_i; 
     end else begin 

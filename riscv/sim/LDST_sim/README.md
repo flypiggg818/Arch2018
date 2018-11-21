@@ -9,3 +9,7 @@ The idea of MEM module is basically the same as IF module.
 ![avatar](./ldst_explain.png)
 
 In this experiment, implement LH first. 
+
+MEM_SIM: In this experiment, we connect MEM with RAM_ARBITRATOR which further provides control signals to RAM. We first use STORE instruction to STORE a particular kind of data into $(0) of RAM. Then use the corresponding instruction to read the same amount of data. Simulation shows that this is valid. 
+
+Then, I'll make STORE instruction flow through the entire pipeline, thus applying changes to the whole architecture. 

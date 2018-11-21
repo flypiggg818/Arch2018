@@ -23,6 +23,9 @@
 `define ALU_LW_OP               7'b0001110
 `define ALU_LBU_OP              7'b0001111 // zero-extended
 `define ALU_LHU_OP              7'b0010000
+`define ALU_SB_OP               7'b0010001
+`define ALU_SH_OP               7'b0010010
+`define ALU_SW_OP               7'b0010011
 
 // 以下是risc-v定义的alu-op类型
 `define OpBus         6:0

@@ -3,7 +3,7 @@
 // module port naming convention: name_dstModule_i/o. 
 
 /**
-  IF module is a combinational logic to catch up to 4 cycles. 
+  IF module is a combinational logic to catch up to 5 cycles. But considering more slower parts, we use 6 times divided clock here. 
   See README in sim/IF_sim for more instruction. 
 */
 module IF(
@@ -13,23 +13,15 @@ module IF(
   input wire rdy, 
   
   // ram ce is true when addr is valid (handled in cpu module). 
-  output reg[31:0] addr_mem_o, 
-  input wire[7:0] d_mem_i, 
-  
-  output wire[31:0] inst_IFID_o
-); 
-  
-  reg[7:0] inst_bt_0; 
-  reg[7:0] inst_bt_1; 
-  reg[7:0] inst_bt_2; 
+  output reg[31:0] addr_RAM_o, 
+  input wire[7:0] data_RAM_i, 
+  input wire stall_RAM_i, 
 
-  assign inst_IFID_o[7:0] = inst_bt_0; 
-  assign inst_IFID_o[15:8] = inst_bt_1; 
-  assign inst_IFID_o[23:16] = inst_bt_2; 
-  assign inst_IFID_o[31:24] = d_mem_i; // logic circuit. 
-  
-  reg beg_flag;
-  reg end_flag;  
+  output reg[31:0] inst_IFID_o
+); 
+
+  reg beg_flag; 
+  reg end_flag;
   reg[2:0] FSM; // FSM state. 
 
   always @ (posedge dclk) begin 
@@ -45,46 +37,52 @@ module IF(
 
   always @ (posedge clk or posedge rst) begin 
     if (rst == `Enable) begin 
-      inst_bt_0 <= `ZeroByte; 
-      inst_bt_1 <= `ZeroByte; 
-      inst_bt_2 <= `ZeroByte; 
-			addr_mem_o <= `ZeroWord; 
+			addr_RAM_o <= `ZeroWord; 
       FSM <= 3'b001; 
       end_flag <= `Disable; 
+      inst_IFID_o <= `ZeroWord; 
     end else if ((beg_flag ^ end_flag) == `Enable) begin // if begin and end flags are different 
-      case (FSM) 
-        3'b001: begin 
-          // $(0) is out in posedge 
-          addr_mem_o <= addr_mem_o + 32'b1; 
-          FSM <= 3'b010; 
-        end 
-        3'b010: begin 
-          // $(1) is out in posedge 
-          inst_bt_0 <= d_mem_i; 
-          addr_mem_o <= addr_mem_o + 32'b1; 
-          FSM <= 3'b011; 
-        end 
-        3'b011: begin 
-          // $(2) is out in posedge 
-          inst_bt_1 <= d_mem_i; 
-          addr_mem_o <= addr_mem_o + 32'b1; 
-          FSM <= 3'b100; 
-        end 
-        3'b100: begin 
-          inst_bt_2 <= d_mem_i; 
-          addr_mem_o <= addr_mem_o + 32'b1; 
-          FSM <= 3'b000; 
-        end 
-        3'b000: begin 
-          // simultaneous state with dclk. 
-          // note flags should be altered simultaneously, otherwise circuit won't check 'case' block. 
-          end_flag <= ~end_flag; 
-          FSM <= 3'b001; 
-        end 
-        default: begin 
-          // avoid collision against 'dclk' block
-        end 
-      endcase
-    end 
+      if (stall_RAM_i == `Enable) begin // ram is occupied, abandon this inst-fetching 
+        FSM <= 3'b001; 
+        end_flag <= ~end_flag; 
+        inst_IFID_o <= `ZeroWord; 
+        addr_RAM_o[1:0] <= 2'b0; // re-align pc address 
+      end else begin 
+        case (FSM) 
+          3'b001: begin 
+            // $(0) is on bus 
+            addr_RAM_o <= addr_RAM_o + 32'b1; 
+            FSM <= 3'b010; 
+          end 
+          3'b010: begin 
+            // $(1) is on bus 
+            inst_IFID_o[7:0] <= data_RAM_i; 
+            addr_RAM_o <= addr_RAM_o + 32'b1; 
+            FSM <= 3'b011; 
+          end 
+          3'b011: begin 
+            // $(2) is on bus 
+            inst_IFID_o[15:8] <= data_RAM_i; 
+            addr_RAM_o <= addr_RAM_o + 32'b1; 
+            FSM <= 3'b100; 
+          end 
+          3'b100: begin 
+            // $(3) is on bus 
+            inst_IFID_o[23:16] <= data_RAM_i; 
+            addr_RAM_o <= addr_RAM_o + 32'b1; 
+            FSM <= 3'b101; 
+          end 
+          3'b101: begin 
+            inst_IFID_o[31:24] <= data_RAM_i; 
+            end_flag <= ~end_flag; 
+            FSM <= 3'b001; 
+          end 
+          default: begin 
+            // avoid collision against 'dclk' block
+          end 
+        endcase 
+      end 
+		end else begin 
+		end // for the completeness of 'if-else'. 
   end
 endmodule 
