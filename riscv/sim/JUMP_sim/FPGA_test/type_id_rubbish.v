@@ -51,7 +51,6 @@ module ID(
   wire[31:0] B_imm = {{20{inst_IFID_i[31]}}, inst_IFID_i[7], inst_IFID_i[30:25], inst_IFID_i[11:8], 1'b0};
   wire[31:0] U_imm = {inst_IFID_i[31:12], {12{inst_IFID_i[31]}}};
   wire[31:0] J_imm = {{12{inst_IFID_i[31]}}, inst_IFID_i[19:12], inst_IFID_i[20], inst_IFID_i[30:21], 1'b0};
-  reg[31:0] imm; 
 
   // 通过monitor来监视指令的各个部分
   initial begin 
@@ -137,7 +136,7 @@ module ID(
             default: begin end // dangerous 
           endcase 
         end 
-        `JAL_OP: begin // add offset(imm) to pc
+        `JAL_OP: begin 
           aluop_IDEX_o <= `ALU_JAL_OP; 
           wreg_IDEX_o <= `Enable; 
           alusel_IDEX_o <= `ALU_ARITH_SEL; 
@@ -145,35 +144,22 @@ module ID(
           re1_REGFILE_o <= `Disable; 
           re2_REGFILE_o <= `Disable;        
         end 
-        `JALR_OP: begin // add $(rs1) by offset, replace pc. 
-          aluop_IDEX_o <= `ALU_JALR_OP; 
-          wreg_IDEX_o <= `Enable; 
-          alusel_IDEX_o <= `ALU_ARITH_SEL; 
-          imm <= I_imm; 
-          re2_REGFILE_o <= `Disable; 
+        `JALR_OP: begin
+          
         end 
-        `BRANCH_OP: begin
-          alusel_IDEX_o <= `ALU_NOP_SEL; 
-          // wreg_IDEX_o <= `Disable; 
-          imm <= B_imm; 
+        `BRANCH_OP: begin 
           case (funct3) 
             `BEQ_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BEQ_OP; 
             end 
             `BNE_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BNE_OP; 
             end 
             `BLT_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BLT_OP; 
             end 
             `BGE_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BGE_OP; 
             end 
             `BLTU_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BLTU_OP; 
             end 
             `BGEU_FNT3: begin 
-              aluop_IDEX_o <= `ALU_BGEU_OP; 
             end 
             default: begin // shitty case
             end 
@@ -227,9 +213,7 @@ module ID(
       if (opcode == `STORE_OP) begin 
         regdata1_IDEX_o <= regdata1_fwrded;
         SdataBoffset_IDEX_o <= regdata2_fwrded;  
-      end else if (opcode == `BRANCH_OP) begin
-        SdataBoffset_IDEX_o <= imm; 
-      end else begin  
+      end else begin 
         regdata1_IDEX_o <= regdata1_fwrded;
       end 
     end else begin // read disable
@@ -240,6 +224,7 @@ module ID(
   always @ (*) begin 
     if (rst == `Enable) begin // reset
       regdata2_IDEX_o <= `ZeroWord; 
+      // rq_STALLER_o <= `Disable;
     end else if (re2_REGFILE_o == `Enable) begin // read enable
       if (opcode == `STORE_OP) begin 
         regdata2_IDEX_o <= imm; 

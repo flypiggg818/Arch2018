@@ -16,7 +16,7 @@ module MEM(
   input wire wreg_EXMEM_i, 
   input wire[4:0] waddr_EXMEM_i, 
   input wire[31:0] alurslt_EXMEM_i, 
-  input wire[31:0] storedata_EXMEM_i, // value stored in STORE inst, alurslt gives ram-address in this case. 
+  input wire[31:0] SdataBoffset_EXMEM_i, // value stored in STORE inst, alurslt gives ram-address in this case. 
 
   output reg re_RAM_o, // read enable 
   output reg[31:0] raddr_RAM_o, 
@@ -66,7 +66,7 @@ module MEM(
             `ALU_SB_OP, `ALU_SH_OP, `ALU_SW_OP: begin 
               we_RAM_o <= `Enable;
               waddr_RAM_o <= alurslt_EXMEM_i; 
-              wdata_RAM_o <= storedata_EXMEM_i[7:0];  
+              wdata_RAM_o <= SdataBoffset_EXMEM_i[7:0];  
               FSM <= 4'b1001; 
             end 
             default: begin 
@@ -131,7 +131,7 @@ module MEM(
               FSM <= 4'b0000; 
             end else begin 
               waddr_RAM_o <= waddr_RAM_o + 32'b1; 
-              wdata_RAM_o <= storedata_EXMEM_i[15:8]; 
+              wdata_RAM_o <= SdataBoffset_EXMEM_i[15:8]; 
               FSM <= 4'b1010; 
             end 
           end 
@@ -142,13 +142,13 @@ module MEM(
               FSM <= 4'b0000; 
             end else begin 
               waddr_RAM_o <= waddr_RAM_o + 32'b1; 
-              wdata_RAM_o <= storedata_EXMEM_i[23:16]; 
+              wdata_RAM_o <= SdataBoffset_EXMEM_i[23:16]; 
               FSM <= 4'b1011; 
             end
           end 
           4'b1011: begin 
             waddr_RAM_o <= waddr_RAM_o + 32'b1; 
-            wdata_RAM_o <= storedata_EXMEM_i[31:24]; 
+            wdata_RAM_o <= SdataBoffset_EXMEM_i[31:24]; 
             FSM <= 4'b1100; 
           end 
           4'b1100: begin 

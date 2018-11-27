@@ -1,0 +1,24 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/FPGA_support/block_ram/block_ram.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dual_port_ram_sync
+INFO: [VRFC 10-311] analyzing module single_port_ram_sync
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/clk_div.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module clk_div
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/cpu.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cpu
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/ex.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module EX
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/ex_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module EX_MEM
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ID
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:70]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:89]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:101]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:124]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:143]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:151]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:174]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:225]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:235]
+ERROR: [VRFC 10-91] imm is not declared [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:240]
+ERROR: [VRFC 10-2787] module ID ignored due to previous errors [D:/ACM/System/Arch2018/riscv/sim/JUMP_sim/FPGA_test/id.v:3]
