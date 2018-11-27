@@ -13,11 +13,3 @@ _start:
 	addi	x0,x0,0x000
 	addi	x0,x0,0x000
 	lw		x2,0(x0)		# fetch the stored $(x1) from ram into x2
-	lw		x2,0(x0)		
-	lw		x2,0(x0)	
-	lw		x2,0(x0)
-	lw		x2,0(x0)
-	lw		x2,0(x0)
-	lw		x2,0(x0)
-	lw		x2,0(x0)
-	lw		x2,0(x0)		

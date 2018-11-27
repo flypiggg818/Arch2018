@@ -1,0 +1,33 @@
+Vivado Simulator 2018.2
+Copyright 1986-1999, 2001-2018 Xilinx, Inc. All Rights Reserved.
+Running: D:/Verilog/Vivado/2018.2/bin/unwrapped/win64.o/xelab.exe -wto d9012462617142fb88dfecb278aa0a92 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot riscv_sim_behav xil_defaultlib.riscv_sim xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+Completed static elaboration
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/ram.v" Line 3. Module ram doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/FPGA_support/block_ram/block_ram.v" Line 62. Module single_port_ram_sync(ADDR_WIDTH=17) doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/cpu.v" Line 8. Module cpu doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/clk_div.v" Line 6. Module clk_div doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/if.v" Line 9. Module IF doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/if_id.v" Line 5. Module IF_ID doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/id.v" Line 3. Module ID doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/id_ex.v" Line 6. Module ID_EX doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/ex.v" Line 3. Module EX doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/ex_mem.v" Line 3. Module EX_MEM doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/mem.v" Line 10. Module MEM doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/mem_wb.v" Line 3. Module MEM_WB doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/regfile.v" Line 8. Module REGFILE doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/ram_arbitrator.v" Line 8. Module RAM_ARBITRATOR doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "D:/ACM/System/Arch2018/riscv/sim/STALL_sim/FPGA_test/staller.v" Line 7. Module STALLER doesn't have a timescale but at least one module in design has a timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.single_port_ram_sync(ADDR_WIDTH=...
+Compiling module xil_defaultlib.ram
+Compiling module xil_defaultlib.clk_div
+Compiling module xil_defaultlib.IF
+Compiling module xil_defaultlib.IF_ID
+Compiling module xil_defaultlib.ID
+Compiling module xil_defaultlib.ID_EX
+Compiling module xil_defaultlib.EX
+ERROR: [XSIM 43-3294] Signal EXCEPTION_ACCESS_VIOLATION received.

@@ -48,7 +48,6 @@ module ID(
 			raddr2_REGFILE_o <= `NopRegAddr; 	// avoid latch  
 			imm <= `ZeroWord; 								// avoid latch  
 			waddr_IDEX_o <= `NopRegAddr; 			// avoid latch  
-      storedata_IDEX_o <= `ZeroWord; 
     end else begin // set default decoding first, then switch to cases. 
       re1_REGFILE_o <= `Enable; 
       re2_REGFILE_o <= `Enable; 
@@ -58,7 +57,6 @@ module ID(
       wreg_IDEX_o <= `Disable; // for safety issue 
       aluop_IDEX_o <= `ALU_NOP_OP; 
       alusel_IDEX_o <= `ALU_NOP_SEL; 
-      storedata_IDEX_o <= `ZeroWord; 
       case (opcode) 
         `LOGIC_IMM_OP: begin // rs1 arith with imm, store to dst
           wreg_IDEX_o <= `Enable; 

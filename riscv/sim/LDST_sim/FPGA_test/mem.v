@@ -35,7 +35,11 @@ module MEM(
   reg[3:0] FSM; // FSM state.   
 
   always @ (posedge dclk) begin
-    beg_flag <= ~beg_flag;  
+  	if (rst == `Enable) begin 
+  		beg_flag <= `Disable; 
+  	end else begin 
+    	beg_flag <= ~beg_flag;  
+  	end 
   end 
 
   always @ (posedge clk or posedge rst) begin 
@@ -45,7 +49,6 @@ module MEM(
       wdata_MEMWB_o <= `ZeroWord; 
       re_RAM_o <= `Disable; 
       we_RAM_o <= `Disable;
-      beg_flag <= `Disable; 
       end_flag <= `Disable;  
       FSM <= 4'b0000; 
     end else begin
