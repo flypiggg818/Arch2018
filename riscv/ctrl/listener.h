@@ -14,7 +14,7 @@ int inter_byte_timeout = 50;
 int read_timeout_constant = 50;
 int read_timeout_multiplier = 10;
 int write_timeout_constant = 50;
-int write_timeout_multiplier = 10;
+int write_timeout_multiplier = 10; 
 
 //methods
 int on_init() {

@@ -1,1 +1,0 @@
-This test fetches the first 8 bits in ram repeatedly. (reset IF address all the time). Thus is sufficient to show that IF module really works on FPGA. 

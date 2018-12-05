@@ -1,25 +1,16 @@
 #include "io.h"
-//input: 1 2 3 4
+int tak(int x, int y, int z) {
+	if ( y < x ) return 1 + tak( tak(x-1, y, z), tak(y-1, z, x), tak(z-1, x, y) );
+	else return z;
+}
 
-int a[4];
-int main()
-{
-    int b[4];
-	int i;
-    for (i = 0; i < 4; i++)
-	{
-		a[i] = 0;
-		b[i] = inl();
-	}
-	for (i = 0; i < 4; i++)
-	{
-		outl(a[i]);
-	}
-	println("");
-	int *p;
-	p=b;
-	for (i = 0; i < 4; i++)
-	{
-		outl(p[i]);
-	}
+int main(){
+	int a;
+	int b;
+	int c;
+	a=inl();
+	b=inl();
+	c=inl();
+	outlln(tak(a,b,c));
+	return 0;
 }

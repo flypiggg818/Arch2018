@@ -1,0 +1,21 @@
+
+P_arith.om:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010054 <_start>:
+   10054:	800000b7          	lui	ra,0x80000
+   10058:	0100e093          	ori	ra,ra,16
+   1005c:	80000137          	lui	sp,0x80000
+   10060:	00116113          	ori	sp,sp,1
+   10064:	001101b3          	add	gp,sp,ra
+   10068:	0fe18193          	addi	gp,gp,254 # 1198a <__global_pointer$+0xfe>
+   1006c:	002181b3          	add	gp,gp,sp
+   10070:	402181b3          	sub	gp,gp,sp
+   10074:	ffff00b7          	lui	ra,0xffff0
+   10078:	0000a133          	slt	sp,ra,zero
+   1007c:	0000b133          	sltu	sp,ra,zero
+   10080:	000010b7          	lui	ra,0x1
+   10084:	8000a193          	slti	gp,ra,-2048
+   10088:	8000b193          	sltiu	gp,ra,-2048

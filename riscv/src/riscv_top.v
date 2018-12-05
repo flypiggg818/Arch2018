@@ -105,6 +105,8 @@ wire [ 7:0]					hci_io_din;
 wire [ 7:0]					hci_io_dout;
 wire 						hci_io_wr;
 
+
+                                   
 hci #(.SYS_CLK_FREQ(SYS_CLK_FREQ),
 	.RAM_ADDR_WIDTH(RAM_ADDR_WIDTH),
 	.BAUD_RATE(UART_BAUD_RATE)) hci0

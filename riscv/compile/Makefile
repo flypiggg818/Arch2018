@@ -10,7 +10,9 @@ CROSS_COMPILE = $(TOOL_CHAIN)/riscv32-unknown-elf-
 
 # .data can be examined directly
 %.data: %.om
-	$(CROSS_COMPILE)objcopy -O verilog $< $@
+	# $(CROSS_COMPILE)objcopy -O verilog $< $@
+	$(CROSS_COMPILE)objcopy -O verilog $< test.data
+	$(CROSS_COMPILE)objdump -M no-aliases -D $< > test.dump
 
 # .bin is used by FPGA controller
 %.bin: %.om
