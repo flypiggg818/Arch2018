@@ -10,8 +10,8 @@ module riscv_top(
 //	output wire[15:0]	dbg // output 16 bits instruction 
 );
 
-localparam SYS_CLK_FREQ = 100000000; // 12500000;  // 100000000,
-localparam UART_BAUD_RATE = 115200; // 57600; // 115200;
+localparam SYS_CLK_FREQ = 50000000; // 100000000;
+localparam UART_BAUD_RATE = 115200;
 localparam RAM_ADDR_WIDTH = 17; 			// 128KiB ram, should not be modified
 
 reg rst;
@@ -21,6 +21,7 @@ wire clk;
 
 // assign EXCLK (or your own clock module) to clk
 assign clk = EXCLK;
+
 
 always @(posedge clk or posedge btnC)
 begin
@@ -36,6 +37,16 @@ begin
 	end
 end
 
+wire dclk; 
+clk_div clk_div0(.clk(clk), 
+                 .rst(rst), 
+                 .dclk(dclk)); 
+wire drst;     
+rst_dragger rst_dragger0(
+	  .clk(clk),
+	  .rst(rst), 
+	  .drst(drst)
+	); 
 //
 // System Memory Buses
 //
@@ -51,7 +62,7 @@ wire [RAM_ADDR_WIDTH-1:0]	ram_a;
 wire [ 7:0]					ram_dout;
 
 ram #(.ADDR_WIDTH(RAM_ADDR_WIDTH))ram0(
-	.clk_in(clk),
+	.clk_in(dclk),
 	.en_in(ram_en),
 	.r_nw_in(~cpumc_wr),
 	.a_in(ram_a),
@@ -74,8 +85,8 @@ wire		cpu_rdy;
 wire [31:0] cpu_dbgreg_dout;
 //assign dbg = cpu_dbgreg_dout[15:0]; 
 cpu cpu0(
-	.clk_in(clk),
-	.rst_in(rst),
+	.clk_in(dclk),
+	.rst_in(drst),
 	.rdy_in(cpu_rdy),
 
 	.mem_din(cpu_ram_din),
@@ -105,8 +116,8 @@ hci #(.SYS_CLK_FREQ(SYS_CLK_FREQ),
 	.RAM_ADDR_WIDTH(RAM_ADDR_WIDTH),
 	.BAUD_RATE(UART_BAUD_RATE)) hci0
 (
-	.clk(clk),
-	.rst(rst),
+	.clk(dclk),
+	.rst(drst),
 	.tx(Tx),
 	.rx(Rx),
 	.active(hci_active),

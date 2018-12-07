@@ -11,21 +11,13 @@ module clk_div(
 //  output wire dclk 
 	output reg dclk
 ); 
-//  reg[2:0] cnt;
-	reg[2:0] cnt;  
+//  reg[2:0] cnt; 
 	always @ (posedge clk) begin 
 		if (rst == 1'b1) begin 
-			cnt <= 3'b110; 
+			dclk <= 1'b1;  
 		end else begin 
-			cnt <= cnt + 2'b1; 
-		end 
-	end 
-	
-	always @ (posedge clk) begin 
-		if (rst == 1'b1) begin 
-			dclk <= 1'b0; 
-		end else if (cnt == 3'b111) begin 
 			dclk <= ~dclk; 
 		end 
 	end 
+
 endmodule 

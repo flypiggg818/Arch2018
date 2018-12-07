@@ -5,7 +5,7 @@
 */
 module ID_EX(
   input wire rst, 
-  input wire dclk, 
+  input wire clk, 
   input wire[`AluOpBus] aluop_ID_i, 
   input wire[`AluSelBus] alusel_ID_i,
   input wire[31:0] regdata1_ID_i, 
@@ -25,8 +25,8 @@ module ID_EX(
   output reg[31:0] SdataBoffset_EX_o, 
   output reg[31:0] pc_EX_o  
 ); 
-  always @ (posedge dclk, posedge rst) begin 
-    if (rst == `Enable || stl_STALLER_i == `Bubble) begin 
+  always @ (posedge clk, posedge rst) begin 
+    if (rst == `Enable || stl_STALLER_i == `BUBBLE) begin 
       aluop_EX_o <= `ALU_NOP_OP;
       alusel_EX_o <= `ALU_NOP_SEL; 
       regdata1_EX_o <= `ZeroWord;
@@ -35,7 +35,7 @@ module ID_EX(
       waddr_EX_o <= 5'b0; 
       SdataBoffset_EX_o <= `ZeroWord;
       pc_EX_o <= `ZeroWord;  
-    end else if (stl_STALLER_i == `Stall) begin // hold by staller 
+    end else if (stl_STALLER_i == `STALL) begin // hold by staller 
     end else begin
       aluop_EX_o <= aluop_ID_i;
       alusel_EX_o <= alusel_ID_i; 

@@ -2,7 +2,7 @@
 
 module EX_MEM(
   input wire rst, 
-  input wire dclk, 
+  input wire clk, 
   
   input wire[`AluOpBus] aluop_EX_i, 
   input wire wreg_EX_i, 
@@ -17,14 +17,14 @@ module EX_MEM(
   output reg[31:0] alurslt_MEM_o, 
   output reg[31:0] SdataBoffset_MEM_o
 );
-  always @ (posedge dclk, posedge rst) begin 
-    if (rst == `Enable || stl_STALLER_i == `Bubble) begin 
+  always @ (posedge clk, posedge rst) begin 
+    if (rst == `Enable || stl_STALLER_i == `BUBBLE) begin 
       aluop_MEM_o <= `ALU_NOP_OP; 
       wreg_MEM_o <= `Disable; 
       waddr_MEM_o <= `NopRegAddr;
       alurslt_MEM_o <= `ZeroWord; 
       SdataBoffset_MEM_o <= `ZeroWord; 
-    end else if (stl_STALLER_i == `Stall) begin // hold by staller 
+    end else if (stl_STALLER_i == `STALL) begin // hold by staller 
     end else begin 
       aluop_MEM_o <= aluop_EX_i; 
       wreg_MEM_o <= wreg_EX_i; 

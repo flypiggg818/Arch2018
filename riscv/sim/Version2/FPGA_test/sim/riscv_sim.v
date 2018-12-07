@@ -16,14 +16,9 @@ module riscv_sim;
 
 	initial begin 
 		rst <= 1'b0; 
-		rdy <= 1'b0;
+		rdy <= 1'b1;
 		#200 rst <= 1'b1; 
 		#200 rst <= 1'b0;  
-		#300 rdy <= 1'b1;
-		#300 rdy <= 1'b0;
-		#200 rdy <= 1'b1;
-		#200 rdy <= 1'b0;
-		#200 rdy <= 1'b1;
 
     #5000 $stop; 
 	end 

@@ -10,8 +10,6 @@ module EX(
   input wire[4:0] waddr_IDEX_i,
   input wire[31:0] SdataBoffset_IDEX_i, 
   input wire[31:0] pc_IDEX_i, 
-  output reg[31:0] JBtaraddr_IF_o_fromEX, // feedback to IF 
-  output reg JBje_IF_o, // jump enable 
 
   output reg[`AluOpBus] aluop_EXMEM_o, // downstream signals
   output reg wreg_EXMEM_o, 
@@ -81,40 +79,17 @@ module EX(
       end 
       `ALU_JAL_OP: begin // $(pc+4) -> rd; modify pc 
         arith_rslt = pc_IDEX_i + 32'h4; 
-        JBtaraddr_IF_o_fromEX = pc_IDEX_i + regdata1_IDEX_i; // increment pc with offset
       end 
       `ALU_JALR_OP: begin // $(pc+4) -> rd; replace pc
         arith_rslt = pc_IDEX_i + 32'h4; 
-        JBtaraddr_IF_o_fromEX = regdata1_IDEX_i + regdata2_IDEX_i; 
       end 
       `ALU_BEQ_OP, `ALU_BNE_OP, `ALU_BLT_OP, 
-      `ALU_BLTU_OP, `ALU_BGE_OP, `ALU_BGEU_OP: begin 
-        JBtaraddr_IF_o_fromEX = pc_IDEX_i + SdataBoffset_IDEX_i;
-      end 
-      `ALU_NOP_OP: begin 
+      `ALU_BLTU_OP, `ALU_BGE_OP, `ALU_BGEU_OP, 
+      `ALU_NOP_OP: begin // do nothing 
       end 
       default: begin 
       end 
     endcase 
-  end 
-
-  // jump 
-  wire jump_indicator = (aluop_IDEX_i == `ALU_JAL_OP    || // unconditional jump 
-                         aluop_IDEX_i == `ALU_JALR_OP   || 
-                         ((aluop_IDEX_i == `ALU_BEQ_OP)   && (regdata1_IDEX_i == regdata2_IDEX_i))                      || 
-                         ((aluop_IDEX_i == `ALU_BNE_OP)   && (regdata1_IDEX_i != regdata2_IDEX_i))                      || 
-                         ((aluop_IDEX_i == `ALU_BLT_OP)   && ($signed(regdata1_IDEX_i)   < $signed(regdata2_IDEX_i)))   || 
-                         ((aluop_IDEX_i == `ALU_BLTU_OP)  && ($unsigned(regdata1_IDEX_i) < $unsigned(regdata2_IDEX_i))) || 
-                         ((aluop_IDEX_i == `ALU_BGE_OP)   && ($signed(regdata1_IDEX_i)   >= $signed(regdata2_IDEX_i)))   || 
-                         ((aluop_IDEX_i == `ALU_BGEU_OP)  && ($unsigned(regdata1_IDEX_i) >= $unsigned(regdata2_IDEX_i)))); 
-  always @ (*) begin 
-    if (jump_indicator == `Enable) begin 
-      JBje_IF_o = `Enable; 
-      rq_STALLER_o = `REQ_FLUSH; 
-    end else begin 
-      JBje_IF_o = `Disable; 
-      rq_STALLER_o = `REQ_NOP; 
-    end 
   end 
 
   // assign results to output 

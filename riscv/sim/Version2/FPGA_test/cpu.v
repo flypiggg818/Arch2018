@@ -30,39 +30,25 @@ module cpu(
 // - 0x30004 read: read clocks passed since cpu starts (in dword, 4 bytes)
 // - 0x30004 write: indicates program stop (will output '\0' through uart tx)
 
-wire dclk; 
-clk_div clk_div0(.clk(clk_in), 
-                 .rst(rst_in), 
-                 .dclk(dclk)); 
- 
-wire drst; 
-rst_dragger rst_dragger0(.clk(clk_in), 
-                         .rst(rst_in), 
-                         .drst(drst)); 
-
 wire[7:0] data_IF_i;
 assign data_IF_i = mem_din;  
-wire[1:0] stl_IF_i; 
 wire[31:0] inst_IF_o; 
 wire re_IF_o; 
 wire[31:0] addr_IF_o;
 wire stall_IF_i; 
 wire[31:0] pc_IF_o; 
-wire[`AluOpBus] JBaluopID_IF_i; 
+wire JBjeID_IF_i; 
 wire[31:0] JBtaraddrID_IF_i;
-wire JBje_IF_i; 
-wire[31:0] JBtaraddrEX_IF_i;
+wire[3:0] FSM_IF_o; 
+wire[1:0] stl_IF_i; 
 IF IF0(.clk(clk_in), // common 
-       .dclk(dclk), 
-       .rst(drst),
+       .rst(rst_in),
        .stl_STALLER_i(stl_IF_i), 
        .addr_RAM_o(addr_IF_o), // ram access 
+       .FSM_RAM_o(FSM_IF_o), 
        .data_RAM_i(data_IF_i), 
-       .stall_RAM_i(stall_IF_i), 
-       .JBaluop_ID_i(JBaluopID_IF_i), 
+       .JBje_ID_i(JBjeID_IF_i), 
        .JBtaraddr_ID_i(JBtaraddrID_IF_i), 
-       .JBje_EX_i(JBje_IF_i),
-       .JBtaraddr_EX_i(JBtaraddrEX_IF_i), 
        .inst_IFID_o(inst_IF_o), 
        .pc_IFID_o(pc_IF_o)); // down-stream 
 
@@ -73,8 +59,8 @@ assign pc_IFID_i = pc_IF_o;
 assign inst_IFID_i = inst_IF_o; 
 wire[31:0] inst_IFID_o; 
 wire[31:0] pc_IFID_o; 
-IF_ID IF_ID0(.dclk(dclk), // common 
-             .rst(drst), 
+IF_ID IF_ID0(.clk(clk_in), // common 
+             .rst(rst_in), 
              .stl_STALLER_i(stl_IFID_i),  
              .inst_IF_i(inst_IFID_i), 
              .pc_IF_i(pc_IFID_i), // pass pc for jump
@@ -111,12 +97,14 @@ wire[4:0] fwaddrMEM_ID_i;
 wire[31:0] fwdataMEM_ID_i;
 wire[`AluOpBus] faluopEX_ID_i; 
 wire[31:0] pc_ID_i; 
-wire[31:0] JBtaraddr_ID_o; 
+
+wire[31:0] JBtaraddr_ID_o; // branch signals 
+wire JBje_ID_o; 
 wire[31:0] pc_ID_o; 
-assign JBaluopID_IF_i = aluop_ID_o; 
-assign JBtaraddrID_IF_i = JBtaraddr_ID_o; // assign back to IF's wire
+assign JBjeID_IF_i = JBje_ID_o; 
+assign JBtaraddrID_IF_i = JBtaraddr_ID_o; 
 assign pc_ID_i = pc_IFID_o; // pc signal 
-ID ID0(.rst(drst), // common 
+ID ID0(.rst(rst_in), // common 
        .inst_IFID_i(inst_ID_i), // input
        .re1_REGFILE_o(re1_ID_o), // registerfile access 
        .raddr1_REGFILE_o(raddr1_ID_o), 
@@ -132,7 +120,8 @@ ID ID0(.rst(drst), // common
        .fwdata_MEM_i(fwdataMEM_ID_i), 
        .faluop_EX_i(faluopEX_ID_i), 
        .pc_IFID_i(pc_ID_i), 
-       .JBtaraddr_IF_o_fromID(JBtaraddr_ID_o), 
+       .JBje_IF_o(JBje_ID_o), 
+       .JBtaraddr_IF_o(JBtaraddr_ID_o), // jump signals 
        .aluop_IDEX_o(aluop_ID_o), // decode results
        .alusel_IDEX_o(alusel_ID_o), 
        .regdata1_IDEX_o(regdata1_ID_o), 
@@ -142,6 +131,7 @@ ID ID0(.rst(drst), // common
        .SdataBoffset_IDEX_o(SdataBoffset_ID_o), 
        .rq_STALLER_o(rq_ID_o), 
        .pc_IDEX_o(pc_ID_o)); 
+
 
 wire[`AluOpBus] aluop_IDEX_i; 
 wire[`AluSelBus] alusel_IDEX_i; 
@@ -169,8 +159,8 @@ wire wreg_IDEX_o;
 wire[4:0] waddr_IDEX_o; 
 wire[31:0] SdataBoffset_IDEX_o; 
 wire[31:0] pc_IDEX_o;  
-ID_EX ID_EX0(.rst(drst), // common 
-             .dclk(dclk), 
+ID_EX ID_EX0(.rst(rst_in), // common 
+             .clk(clk_in), 
              .aluop_ID_i(aluop_IDEX_i), // inputs 
              .alusel_ID_i(alusel_IDEX_i),
              .regdata1_ID_i(regdata1_IDEX_i), 
@@ -188,6 +178,7 @@ ID_EX ID_EX0(.rst(drst), // common
              .waddr_EX_o(waddr_IDEX_o), 
              .SdataBoffset_EX_o(SdataBoffset_IDEX_o), 
              .pc_EX_o(pc_IDEX_o)); 
+
 
 wire[`AluOpBus] aluop_EX_i;  
 wire[`AluSelBus] alusel_EX_i;  
@@ -210,17 +201,13 @@ wire wreg_EX_o; // downstream signals
 wire[4:0] waddr_EX_o; 
 wire[31:0] alurslt_EX_o; 
 wire[31:0] SdataBoffset_EX_o; 
-wire[31:0] JBtaraddr_EX_o; 
-wire JBje_EX_o; 
 wire[`AluOpBus] aluop_EX_o; 
 wire[1:0] rq_EX_o; 
 assign fwregEX_ID_i = wreg_EX_o; // assign forwarding signals, note that this forwarding is useless in terms of LD instruction
 assign fwaddrEX_ID_i = waddr_EX_o;
 assign fwdataEX_ID_i = alurslt_EX_o;
 assign faluopEX_ID_i = aluop_EX_o; 
-assign JBtaraddrEX_IF_i = JBtaraddr_EX_o; 
-assign JBje_IF_i = JBje_EX_o; 
-EX EX0(.rst(drst), // common
+EX EX0(.rst(rst_in), // common
        .aluop_IDEX_i(aluop_EX_i), // inputs 
        .alusel_IDEX_i(alusel_EX_i), 
        .regdata1_IDEX_i(regdata1_EX_i), 
@@ -229,14 +216,13 @@ EX EX0(.rst(drst), // common
        .waddr_IDEX_i(waddr_EX_i),
        .SdataBoffset_IDEX_i(SdataBoffset_EX_i),
        .pc_IDEX_i(pc_EX_i),   
-       .JBtaraddr_IF_o_fromEX(JBtaraddr_EX_o), 
-       .JBje_IF_o(JBje_EX_o), 
        .aluop_EXMEM_o(aluop_EX_o), // results 
        .wreg_EXMEM_o(wreg_EX_o),
        .waddr_EXMEM_o(waddr_EX_o), 
        .alurslt_EXMEM_o(alurslt_EX_o), 
        .SdataBoffset_EXMEM_o(SdataBoffset_EX_o), 
        .rq_STALLER_o(rq_EX_o)); 
+
 
 wire[`AluOpBus] aluop_EXMEM_i; 
 wire wreg_EXMEM_i; 
@@ -255,8 +241,8 @@ wire wreg_EXMEM_o;
 wire[4:0] waddr_EXMEM_o; 
 wire[31:0] alurslt_EXMEM_o; 
 wire[31:0] SdataBoffset_EXMEM_o; 
-EX_MEM EX_MEM0(.rst(drst), // common
-               .dclk(dclk), 
+EX_MEM EX_MEM0(.rst(rst_in), // common
+               .clk(clk_in), 
                .aluop_EX_i(aluop_EXMEM_i), 
                .wreg_EX_i(wreg_EXMEM_i), // inputs 
                .waddr_EX_i(waddr_EXMEM_i), 
@@ -268,6 +254,7 @@ EX_MEM EX_MEM0(.rst(drst), // common
                .waddr_MEM_o(waddr_EXMEM_o), 
                .alurslt_MEM_o(alurslt_EXMEM_o), 
                .SdataBoffset_MEM_o(SdataBoffset_EXMEM_o)); 
+
 
 wire[`AluOpBus] aluop_MEM_i; 
 wire wreg_MEM_i; 
@@ -291,19 +278,21 @@ wire[7:0] wdata_MEM_o;
 wire wreg_MEM_o; 
 wire[4:0] wbaddr_MEM_o; 
 wire[31:0] wbdata_MEM_o; 
+
+wire[1:0] stl_MEM_i; 
 // assign fwregMEM_ID_i = wreg_MEM_o; // wrong!!!
 // assign fwaddrMEM_ID_i = wbaddr_MEM_o; // wrong!!!
 assign fwregMEM_ID_i = wreg_EXMEM_o; 
 assign fwaddrMEM_ID_i = waddr_EXMEM_o; 
 assign fwdataMEM_ID_i = wbdata_MEM_o; 
-MEM MEM0(.rst(drst), // common
+MEM MEM0(.rst(rst_in), // common
          .clk(clk_in), 
-         .dclk(dclk), 
          .aluop_EXMEM_i(aluop_MEM_i), // inputs
          .wreg_EXMEM_i(wreg_MEM_i), 
          .waddr_EXMEM_i(waddr_MEM_i), 
          .alurslt_EXMEM_i(alurslt_MEM_i), 
          .SdataBoffset_EXMEM_i(SdataBoffset_MEM_i), 
+         .stl_STALLER_i(stl_MEM_i), 
          .re_RAM_o(re_MEM_o), // ram access
          .raddr_RAM_o(raddr_MEM_o), 
          .rdata_RAM_i(rdata_MEM_i), 
@@ -324,20 +313,14 @@ assign wdata_MEMWB_i = wbdata_MEM_o;
 wire wreg_MEMWB_o; 
 wire[4:0] waddr_MEMWB_o; 
 wire[31:0] wdata_MEMWB_o; 
-MEM_WB MEM_WB0(.rst(drst), // common 
-							 .dclk(dclk), 
+MEM_WB MEM_WB0(.rst(rst_in), // common 
+							 .clk(clk_in), 
                .wreg_MEM_i(wreg_MEMWB_i), // inputs 
                .waddr_MEM_i(waddr_MEMWB_i), 
                .wdata_MEM_i(wdata_MEMWB_i), 
                .wreg_REGFILE_o(wreg_MEMWB_o), // down-stream 
                .waddr_REGFILE_o(waddr_MEMWB_o), 
                .wdata_REGFILE_o(wdata_MEMWB_o));
-
-// Note these two ports have been defined in ID phase. 
-// wire[31:0] rdata1_REGFILE_o; 
-// wire[31:0] rdata2_REGFILE_o;
-// assign rdata1_ID_i = rdata1_REGFILE_o; 
-// assign rdata2_ID_i = rdata2_REGFILE_o; 
 
 wire re1_REGFILE_i; // read enable
 wire[4:0] raddr1_REGFILE_i; // read addr 
@@ -355,8 +338,8 @@ wire[31:0] dbg_REGFILE_o; // debug signal assigned in the bottom
 assign we_REGFILE_i = wreg_MEMWB_o; 
 assign waddr_REGFILE_i = waddr_MEMWB_o; 
 assign wdata_REGFILE_i = wdata_MEMWB_o; 
-REGFILE REGFILE0(.rst(drst), // common 
-                 .dclk(dclk), 
+REGFILE REGFILE0(.rst(rst_in), // common 
+                 .clk(clk_in), 
                  .re1_ID_i(re1_REGFILE_i), // read access 
                  .raddr1_ID_i(raddr1_REGFILE_i), 
                  .rdata1_ID_o(rdata1_REGFILE_o), 
@@ -368,30 +351,32 @@ REGFILE REGFILE0(.rst(drst), // common
                  .wdata_WB_i(wdata_REGFILE_i), 
                  .dbg_CPU_o(dbg_REGFILE_o)); 
 
+
 wire[31:0] addrIF_ARB_i; 
 wire reMEM_ARB_i;
 wire[31:0] raddrMEM_ARB_i; 
 wire weMEM_ARB_i; 
 wire[31:0] waddrMEM_ARB_i; 
 wire[7:0] wdataMEM_ARB_i; 
+wire[3:0] FSM_ARB_i; 
 assign addrIF_ARB_i = addr_IF_o; 
 assign reMEM_ARB_i = re_MEM_o; 
 assign raddrMEM_ARB_i = raddr_MEM_o; 
 assign weMEM_ARB_i = we_MEM_o; 
 assign waddrMEM_ARB_i = waddr_MEM_o; 
 assign wdataMEM_ARB_i = wdata_MEM_o; 
+assign FSM_ARB_i = FSM_IF_o; 
 
 wire[31:0] addr_ARB_o; 
 wire[7:0] wdata_ARB_o; 
 wire wr_ARB_o; 
-wire stall_ARB_o; // feedback given to IF, assign back to IF 
-assign stall_IF_i = stall_ARB_o; 
+wire[1:0] accessor_ARB_o; 
 assign mem_wr = wr_ARB_o; // assign ram control signal to cpu output ports
 assign mem_dout = wdata_ARB_o; 
 assign mem_a = addr_ARB_o; 
 
-RAM_ARBITRATOR RAM_ARBITRATOR0(.rst(drst), // common 
-                               .addr_IF_i(addrIF_ARB_i), // IF inputs 
+RAM_ARBITRATOR RAM_ARBITRATOR0(.addr_IF_i(addrIF_ARB_i), // IF inputs 
+                               .FSM_IF_i(FSM_ARB_i), 
                                .re_MEM_i(reMEM_ARB_i), // MEM inputs 
                                .raddr_MEM_i(raddrMEM_ARB_i), 
                                .we_MEM_i(weMEM_ARB_i), 
@@ -400,29 +385,35 @@ RAM_ARBITRATOR RAM_ARBITRATOR0(.rst(drst), // common
                                .addr_RAM_o(addr_ARB_o), // ram control signal 
                                .wdata_RAM_o(wdata_ARB_o), 
                                .wr_RAM_o(wr_ARB_o), 
-                               .stall_IF_o(stall_ARB_o)); 
+                               .accessor_STALLER_o(accessor_ARB_o)); 
 
 wire[1:0] rqID_STALLER_i; 
 wire[1:0] rqEX_STALLER_i; 
 wire[1:0] rqMEM_STALLER_i; // temporarily abandoned
+wire[1:0] accessor_STALLER_i; 
 wire[1:0] stlIF_STALLER_o; 
 wire[1:0] stlIFID_STALLER_o; 
 wire[1:0] stlIDEX_STALLER_o; 
 wire[1:0] stlEXMEM_STALLER_o; 
+wire[1:0] stlMEM_STALLER_o; 
 assign rqID_STALLER_i = rq_ID_o; 
 assign rqEX_STALLER_i = rq_EX_o; 
 assign stl_IF_i = stlIF_STALLER_o; 
 assign stl_IFID_i = stlIFID_STALLER_o; 
 assign stl_IDEX_i = stlIDEX_STALLER_o; 
-assign stl_EXMEM_i = stlEXMEM_STALLER_o; 
+assign stl_EXMEM_i = stlEXMEM_STALLER_o;
+assign stl_MEM_i = stlMEM_STALLER_o;  
+assign accessor_STALLER_i = accessor_ARB_o; 
 STALLER STALLER0(.rdy(rdy_in), 
                  .rq_ID_i(rqID_STALLER_i), 
                  .rq_EX_i(rqEX_STALLER_i), 
                  .rq_MEM_i(rqMEM_STALLER_i), 
+                 .accessor_ARB_i(accessor_STALLER_i), 
                  .stl_IF_o(stlIF_STALLER_o), 
                  .stl_IFID_o(stlIFID_STALLER_o), 
                  .stl_IDEX_o(stlIDEX_STALLER_o), 
-                 .stl_EXMEM_o(stlEXMEM_STALLER_o)); 
+                 .stl_EXMEM_o(stlEXMEM_STALLER_o), 
+                 .stl_MEM_o(stlMEM_STALLER_o)); 
 
 assign dbgreg_dout = dbg_REGFILE_o; // assign debug output. 
 

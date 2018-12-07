@@ -7,7 +7,7 @@ module rst_dragger(
   input wire rst,
   output wire drst
 ); 
-  reg[3:0] delay_cnt;
+  reg[2:0] delay_cnt;
 
   assign drst = rst | (|delay_cnt); // when all bits of delayed-counter are 0, drst is disabled. 
   always @ (posedge clk) begin 

@@ -7,7 +7,7 @@
 // combinational read, synchronous delayed write. 
 module REGFILE(
   input wire rst, 
-  input wire dclk, 
+  input wire clk, 
 
   input wire re1_ID_i, // read enable
   input wire[4:0] raddr1_ID_i, // read addr 
@@ -75,7 +75,7 @@ module REGFILE(
 
   /** Don't even need to reset registerfile */
 //   write
-   always @ (posedge dclk or posedge rst) begin 
+   always @ (posedge clk or posedge rst) begin 
      if (rst == `Enable) begin 
        for(i = 0; i < 32; i = i+1) begin 
          regs[i] <= `ZeroWord; 

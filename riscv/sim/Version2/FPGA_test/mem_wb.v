@@ -2,7 +2,7 @@
 
 module MEM_WB(
   input wire rst, 
-  input wire dclk, 
+  input wire clk, 
   input wire wreg_MEM_i, 
   input wire[4:0] waddr_MEM_i, 
   input wire[31:0] wdata_MEM_i, 
@@ -11,7 +11,7 @@ module MEM_WB(
   output reg[4:0] waddr_REGFILE_o, 
   output reg[31:0] wdata_REGFILE_o 
 );
-  always @ (posedge dclk, posedge rst) begin 
+  always @ (posedge clk, posedge rst) begin 
     if (rst == `Enable) begin 
       wreg_REGFILE_o <= `Disable; 
       waddr_REGFILE_o <= `NopRegAddr;

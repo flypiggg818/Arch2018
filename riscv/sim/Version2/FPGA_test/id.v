@@ -24,8 +24,8 @@ module ID(
 
   // pc signal passed from IF phase
   input wire[31:0] pc_IFID_i, 
-  // jump target address back to IF
-  output reg[31:0] JBtaraddr_IF_o_fromID, 
+  output wire JBje_IF_o, // jump enable 
+  output reg[31:0] JBtaraddr_IF_o, // feedback to IF 
   // data flow down
   output reg[`AluOpBus] aluop_IDEX_o, // ALU operation code defined by myself 
   output reg[`AluSelBus] alusel_IDEX_o, // ALU operation result type defined by myself 
@@ -58,6 +58,7 @@ module ID(
     // $monitor("inst: %b opcode: %b rs1: %b rs2: %b rd: %b", inst_IFID_i, opcode, rs1, rs2, rd); 
   end 
 
+  /*** main decoding block ***/ 
   always @ (*) begin 
     if (rst == `Enable) begin // no output, don't write back 
     	// reset all regs to avoid inferring latch. 
@@ -70,7 +71,6 @@ module ID(
 			raddr2_REGFILE_o = `NopRegAddr; 	// avoid latch  
 			imm = `ZeroWord; 								// avoid latch  
 			waddr_IDEX_o = `NopRegAddr; 			// avoid latch  
-      JBtaraddr_IF_o_fromID = `ZeroWord;
       pc_IDEX_o = `ZeroWord;  
     end else begin // set default decoding first, then switch to cases. 
       re1_REGFILE_o = `Enable; 
@@ -81,7 +81,6 @@ module ID(
       wreg_IDEX_o = `Disable; // for safety issue 
       aluop_IDEX_o = `ALU_NOP_OP; 
       alusel_IDEX_o = `ALU_NOP_SEL; 
-      JBtaraddr_IF_o_fromID = `ZeroWord; 
       pc_IDEX_o = pc_IFID_i;  
       case (opcode) 
         `LUI_OP: begin 
@@ -262,7 +261,7 @@ module ID(
           alusel_IDEX_o = `ALU_ARITH_SEL; 
           imm = {{12{inst_IFID_i[31]}}, inst_IFID_i[19:12], inst_IFID_i[20], inst_IFID_i[30:21], 1'b0}; // put offset into immediate 
           re1_REGFILE_o = `Disable; 
-          re2_REGFILE_o = `Disable;        
+          re2_REGFILE_o = `Disable;       
         end 
         `JALR_OP: begin // add $(rs1) by offset, replace pc. 
           aluop_IDEX_o = `ALU_JALR_OP; 
@@ -307,6 +306,7 @@ module ID(
     end 
   end 
 
+  /*** match forwarding block ***/ 
   wire pre_inst_is_load; 
   assign pre_inst_is_load = (faluop_EX_i == `ALU_LB_OP || 
                              faluop_EX_i == `ALU_LH_OP || 
@@ -341,16 +341,20 @@ module ID(
 
   // reg1data_output. LOAD can cause pipeline stall, and STORE_INST is dealt separately. 
   // the STALL signal is handled ugly
+  /*** forwarding assignment block ***/ 
   always @ (*) begin 
     if (rst == `Enable) begin // reset
       regdata1_IDEX_o = `ZeroWord; 
+      SdataBoffset_IDEX_o = `ZeroWord; 
     end else if (re1_REGFILE_o == `Enable) begin // read enable
       regdata1_IDEX_o = regdata1_fwrded;
       if (opcode == `STORE_OP) begin 
         SdataBoffset_IDEX_o = regdata2_fwrded;  
       end else if (opcode == `BRANCH_OP) begin
         SdataBoffset_IDEX_o = imm; 
-      end else begin end 
+      end else begin 
+        SdataBoffset_IDEX_o = `ZeroWord; 
+      end 
     end else begin // read disable
       regdata1_IDEX_o = imm; 
     end 
@@ -371,11 +375,47 @@ module ID(
   end 
 
   // detect MEM hazard 
+  /*** MEM LOAD DATA HAZARD ***/ 
   always @ (*) begin 
     if (pre_inst_is_load == `Enable && (raddr1_REGFILE_o == fwaddr_EX_i || raddr2_REGFILE_o == fwaddr_EX_i)) begin 
-      rq_STALLER_o = `REQ_STALL; 
+      rq_STALLER_o = `DATA_HAZARD; 
+    end else if (JBje_IF_o == `Enable) begin 
+      rq_STALLER_o = `CONTROL_HAZARD; 
     end else begin 
-      rq_STALLER_o = `REQ_NOP; 
+      rq_STALLER_o = `NOP_HAZARD; 
+    end 
+  end 
+
+  /*** BRANCH DETECTION block ***/
+  // branch taken / not taken
+  assign JBje_IF_o = (aluop_IDEX_o == `ALU_JAL_OP    || // unconditional jump 
+                         aluop_IDEX_o == `ALU_JALR_OP   || 
+                         ((aluop_IDEX_o == `ALU_BEQ_OP)   && (regdata1_IDEX_o == regdata2_IDEX_o))                      || 
+                         ((aluop_IDEX_o == `ALU_BNE_OP)   && (regdata1_IDEX_o != regdata2_IDEX_o))                      || 
+                         ((aluop_IDEX_o == `ALU_BLT_OP)   && ($signed(regdata1_IDEX_o)   < $signed(regdata2_IDEX_o)))   || 
+                         ((aluop_IDEX_o == `ALU_BLTU_OP)  && ($unsigned(regdata1_IDEX_o) < $unsigned(regdata2_IDEX_o))) || 
+                         ((aluop_IDEX_o == `ALU_BGE_OP)   && ($signed(regdata1_IDEX_o)   >= $signed(regdata2_IDEX_o)))   || 
+                         ((aluop_IDEX_o == `ALU_BGEU_OP)  && ($unsigned(regdata1_IDEX_o) >= $unsigned(regdata2_IDEX_o)))); 
+  // branch jump target address calculation
+  always @ (*) begin 
+    if (rst == `Enable) begin 
+      JBtaraddr_IF_o <= `ZeroWord; // reset branch instruction 
+    end else begin 
+      case (aluop_IDEX_o)
+        `ALU_JAL_OP: begin // $(pc+4) -> rd; modify pc 
+          JBtaraddr_IF_o = pc_IFID_i + regdata1_IDEX_o; // increment pc with offset
+        end 
+        `ALU_JALR_OP: begin // $(pc+4) -> rd; replace pc
+          JBtaraddr_IF_o = regdata1_IDEX_o + regdata2_IDEX_o; 
+        end 
+        `ALU_BEQ_OP, `ALU_BNE_OP, `ALU_BLT_OP, 
+        `ALU_BLTU_OP, `ALU_BGE_OP, `ALU_BGEU_OP: begin 
+          JBtaraddr_IF_o = pc_IFID_i + SdataBoffset_IDEX_o;
+        end
+        default: begin 
+          JBtaraddr_IF_o = `ZeroWord;
+        end 
+      endcase 
     end 
   end 
 endmodule 

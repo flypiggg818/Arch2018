@@ -4,12 +4,20 @@
 `define ZeroByte      8'b0 
 `define NopRegAddr    5'b00000
 
-`define Continue      2'b00
-`define Stall         2'b01
-`define Bubble        2'b10
-`define REQ_STALL     2'b01   // request previous phases STALL, while current phase BUBBLE.
-`define REQ_FLUSH     2'b10   // request FLUSH previous phases in JUMP instruction. 
-`define REQ_NOP       2'b00
+// macros for DATA(LOAD) HAZARD and CONTROL_HAZARD reported from execution combinational circuit to STALLER, 
+// and three status controlled by STALLER. 
+`define NOP_HAZARD      	2'b00 
+`define CONTROL_HAZARD  	2'b01 // branch from ID to IF 
+`define DATA_HAZARD  		  2'b11 // load memory, forwarding from EX to ID
+`define WORK            	2'b00
+`define STALL           	2'b01
+`define BUBBLE          	2'b10
+`define IF_STALL          2'b01
+`define IF_BACKALIGN      2'b11
+// RAM access status reported by RAM_ARBITRATOR to STALLER, which is analyzed in STALLER and issued to control CPU stall. 
+`define IF_ACCESS         2'b00 
+`define IF_BLOCK_MEM      2'b01
+`define MEM_BLOCK_IF      2'b10
 
 // 以下是自己定义的alu-op类型
 `define AluOpBus                6:0

@@ -1,21 +1,20 @@
 
-P_arith.om:     file format elf32-littleriscv
+my.om:     file format elf32-littleriscv
 
 
 Disassembly of section .text:
 
 00010054 <_start>:
-   10054:	800000b7          	lui	ra,0x80000
-   10058:	0100e093          	ori	ra,ra,16
-   1005c:	80000137          	lui	sp,0x80000
-   10060:	00116113          	ori	sp,sp,1
-   10064:	001101b3          	add	gp,sp,ra
-   10068:	0fe18193          	addi	gp,gp,254 # 1198a <__global_pointer$+0xfe>
-   1006c:	002181b3          	add	gp,gp,sp
-   10070:	402181b3          	sub	gp,gp,sp
-   10074:	ffff00b7          	lui	ra,0xffff0
-   10078:	0000a133          	slt	sp,ra,zero
-   1007c:	0000b133          	sltu	sp,ra,zero
-   10080:	000010b7          	lui	ra,0x1
-   10084:	8000a193          	slti	gp,ra,-2048
-   10088:	8000b193          	sltiu	gp,ra,-2048
+   10054:	0eeff1b7          	lui	gp,0xeeff
+   10058:	00c1d193          	srli	gp,gp,0xc
+   1005c:	0aa00093          	addi	ra,zero,170
+   10060:	0bb00113          	addi	sp,zero,187
+   10064:	00118023          	sb	ra,0(gp) # eeff000 <__global_pointer$+0xeeed780>
+   10068:	002180a3          	sb	sp,1(gp) # 11881 <__global_pointer$+0x1>
+   1006c:	00118083          	lb	ra,1(gp) # 11881 <__global_pointer$+0x1>
+   10070:	00018103          	lb	sp,0(gp) # 11880 <__global_pointer$>
+   10074:	0020d463          	bge	ra,sp,1007c <_loop>
+   10078:	11100093          	addi	ra,zero,273
+
+0001007c <_loop>:
+   1007c:	0000006f          	jal	zero,1007c <_loop>

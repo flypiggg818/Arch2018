@@ -1,1 +1,0 @@
-I proceed this project to retrive it from dclk, and add cache, fix LOAD data hazard. 
