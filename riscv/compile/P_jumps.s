@@ -2,14 +2,14 @@
 	.global _start
 
 _start:
-ori x1, x0, 0x1				# (1) x1 = 0x00000000
+ori x1, x0, 0x1				# (1) x1 = 0x00000001
 jal x0,	_j10 					# (1) jump to 0x10
 ori x1, x0, 0x111
 ori x1, x0, 0x110
 
 _j10:
 # addr = 0x10
-ori x1, x0, 0x2				# (2) x1 = 0x00000010
+ori x1, x0, 0x2				# (2) x1 = 0x00000002
 jal x3, _j24					# jump to 0x24 and set x3 = 0x18
 
 ori x1, x0, 0x005			# x1 = 0x00000005

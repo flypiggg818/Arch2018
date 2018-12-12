@@ -1,28 +1,5 @@
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/FPGA_support/block_ram/block_ram.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module dual_port_ram_sync
-INFO: [VRFC 10-311] analyzing module single_port_ram_sync
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/cpu.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module cpu
-INFO: [VRFC 10-2458] undeclared symbol stl_IF_i, assumed default net type wire [D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/cpu.v:45]
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ex.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module EX
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ex_mem.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module EX_MEM
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/id.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module ID
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/id_ex.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module ID_EX
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/if.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module IF
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/if_id.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module IF_ID
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/mem.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module MEM
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/mem_wb.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module MEM_WB
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ram.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module ram
-INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ram_arbitrator.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module RAM_ARBITRATOR
-ERROR: [VRFC 10-91] rst is not declared [D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ram_arbitrator.v:43]
-ERROR: [VRFC 10-2787] module RAM_ARBITRATOR ignored due to previous errors [D:/ACM/System/Arch2018/riscv/sim/Version2/FPGA_test/ram_arbitrator.v:7]
+Vivado Simulator 2018.2
+Copyright 1986-1999, 2001-2018 Xilinx, Inc. All Rights Reserved.
+Running: D:/Verilog/Vivado/2018.2/bin/unwrapped/win64.o/xelab.exe -wto 116192f908604c49945142218dc6a9d2 --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot cache_behav xil_defaultlib.cache xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+ERROR: [XSIM 43-3225] Cannot find design unit xil_defaultlib.cache in library work located at xsim.dir/work.

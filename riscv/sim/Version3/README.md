@@ -1,0 +1,1 @@
+In this Version of CPU, an instruction-cache will be added, with 1 instruction (32 bit) block size. 
