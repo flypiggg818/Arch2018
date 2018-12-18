@@ -41,7 +41,7 @@ always @ (*) begin
 	end else if (rq_MEM_i == `MEM_ACCESS) begin 
 		stl_IF_o    = `STALL; 
 		stl_IFID_o  = `STALL; 
-		stl_IDEX_o  = `STALL;   
+		stl_IDEX_o  = `STALL; 
 		stl_EXMEM_o = `STALL; 
 		stl_MEM_o   = `WORK;   
 	end else begin 

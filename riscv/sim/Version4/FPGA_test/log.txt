@@ -1,0 +1,38 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/FPGA_support/block_ram/block_ram.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dual_port_ram_sync
+INFO: [VRFC 10-311] analyzing module single_port_ram_sync
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/clk_div.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module clk_div
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/cpu.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cpu
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/ctrl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module CTRL
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/ex.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module EX
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/ex_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module EX_MEM
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/FPGA_support/fifo/fifo.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fifo
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/FPGA_support/hci.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hci
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/icache.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ICACHE
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/id.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ID
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/id_ex.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ID_EX
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/if.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module IF
+WARNING: [VRFC 10-756] identifier recover is used before its declaration [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/if.v:28]
+WARNING: [VRFC 10-756] identifier recover is used before its declaration [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/if.v:29]
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/if_id.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module IF_ID
+INFO: [VRFC 10-2263] Analyzing Verilog file "D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MEM
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:82]
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:96]
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:100]
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:159]
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:172]
+ERROR: [VRFC 10-1280] procedural assignment to a non-register wdata_CTRL_o is not permitted, left-hand side should be reg/integer/time/genvar [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:181]
+ERROR: [VRFC 10-2787] module MEM ignored due to previous errors [D:/ACM/System/Arch2018/riscv/sim/Version4/FPGA_test/mem.v:15]
